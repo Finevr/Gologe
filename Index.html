@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gologe</title>
+    <title>GOLOGE</title>
     <style>
         body {
             text-align: center;
         }
-
+        
         h1 {
             color: red;
         }
-
+        
         input[type="text"] {
             width: 300px;
             height: 30px;
             font-size: 16px;
         }
-
+        
         input[type="submit"] {
             height: 30px;
             font-size: 16px;
@@ -25,21 +25,9 @@
 </head>
 <body>
     <h1>GOLOGE</h1>
-    <form action="https://www.wikipedia.org/wiki/Special:Search" method="get">
-        <input type="text" name="search" placeholder="Search Wikipedia">
+    <form action="https://www.google.com/search" method="get">
+        <input type="text" name="q" placeholder="Search...">
         <input type="submit" value="Search">
     </form>
-    <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var searchInput = document.querySelector('input[name="search"]');
-            var searchValue = searchInput.value.trim();
-            if (searchValue.endsWith('.com')) {
-                window.location.href = 'https://www.google.com/search?q=' + searchValue;
-            } else {
-                window.location.href = 'https://www.wikipedia.org/wiki/Special:Search?search=' + searchValue;
-            }
-        });
-    </script>
 </body>
 </html>
