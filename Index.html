@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Browser</title>
+    <title>Custom Browser</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,30 +21,19 @@
             text-align: center;
         }
 
-        nav {
-            background-color: #555;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav button {
-            margin: 0 5px;
-            padding: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        #addressBar {
+        #searchBar {
             width: 70%;
             padding: 10px;
             font-size: 16px;
-            border: none;
+            margin: 20px auto;
+            display: block;
         }
 
-        #goButton {
+        #searchButton {
             padding: 10px;
             font-size: 16px;
+            display: block;
+            margin: 0 auto;
         }
 
         #searchResults {
@@ -63,39 +52,24 @@
 
 <body>
     <header>
-        <h1>Professional Browser</h1>
+        <h1>Custom Browser</h1>
     </header>
 
-    <nav>
-        <button onclick="goBack()">Back</button>
-        <button onclick="goForward()">Forward</button>
-    </nav>
-
-    <div>
-        <input type="text" id="addressBar" placeholder="Enter URL or search term">
-        <button id="goButton" onclick="navigate()">Go/Search</button>
-    </div>
+    <input type="text" id="searchBar" placeholder="Search the internet">
+    <button id="searchButton" onclick="search()">Search</button>
 
     <div id="searchResults"></div>
 
     <script>
-        var historyStack = [];
-        var futureStack = [];
+        function search() {
+            var searchBar = document.getElementById('searchBar');
+            var query = searchBar.value.trim();
 
-        function navigate() {
-            var addressBar = document.getElementById('addressBar');
-            var query = addressBar.value.trim();
-
-            if (isValidURL(query)) {
-                // Handle URL navigation
-                window.location.href = query;
-            } else {
-                // Handle search using DuckDuckGo Instant Answer API
-                search(query);
+            if (query === '') {
+                alert('Please enter a search query');
+                return;
             }
-        }
 
-        function search(query) {
             var searchResultsDiv = document.getElementById('searchResults');
             searchResultsDiv.innerHTML = '<p>Searching...</p>';
 
@@ -121,30 +95,6 @@
                 });
             } else {
                 searchResultsDiv.innerHTML += '<p>No results found.</p>';
-            }
-        }
-
-        function goBack() {
-            if (historyStack.length > 1) {
-                futureStack.push(historyStack.pop());
-                var previousPage = historyStack.pop();
-                window.location.href = previousPage;
-            }
-        }
-
-        function goForward() {
-            if (futureStack.length > 0) {
-                var nextPage = futureStack.pop();
-                window.location.href = nextPage;
-            }
-        }
-
-        function isValidURL(url) {
-            try {
-                new URL(url);
-                return true;
-            } catch (error) {
-                return false;
             }
         }
     </script>
