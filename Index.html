@@ -33,7 +33,7 @@
 <body>
     <h1>GOLOGE</h1>
     <form id="searchForm">
-        <input type="text" name="search" id="searchInput" placeholder="Search Wikipedia">
+        <input type="text" name="search" id="searchInput" placeholder="Search Google">
         <input type="submit" value="Search">
     </form>
     <div id="searchResults"></div>
@@ -45,20 +45,24 @@
             var searchValue = searchInput.value.trim();
             var searchResultsDiv = document.getElementById('searchResults');
 
-            searchResultsDiv.innerHTML = '<p>Searching on Wikipedia...</p>';
+            searchResultsDiv.innerHTML = '<p>Searching on Google...</p>';
 
-            // Use a proxy server to overcome cross-origin restrictions
-            fetch('https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&utf8=1&srsearch=' + encodeURIComponent(searchValue))
+            // Replace 'YOUR_API_KEY' with your actual Google Custom Search JSON API key
+            var apiKey = 'YOUR_API_KEY';
+            // Replace 'YOUR_SEARCH_ENGINE_ID' with your actual Custom Search Engine ID
+            var cx = 'YOUR_SEARCH_ENGINE_ID';
+
+            fetch(`https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(searchValue)}&key=${apiKey}&cx=${cx}`)
                 .then(response => response.json())
                 .then(data => {
-                    var results = data.query.search;
+                    var items = data.items;
                     searchResultsDiv.innerHTML = '<h2>Search Results for "' + searchValue + '"</h2>';
-                    if (results.length > 0) {
-                        results.forEach(result => {
-                            var title = result.title;
-                            var snippet = result.snippet;
-                            var pageLink = 'https://en.wikipedia.org/wiki/' + encodeURIComponent(title);
-                            searchResultsDiv.innerHTML += '<p><strong><a href="' + pageLink + '" target="_blank">' + title + '</a></strong><br>' + snippet + '</p>';
+                    if (items && items.length > 0) {
+                        items.forEach(item => {
+                            var title = item.title;
+                            var link = item.link;
+                            var snippet = item.snippet;
+                            searchResultsDiv.innerHTML += '<p><strong><a href="' + link + '" target="_blank">' + title + '</a></strong><br>' + snippet + '</p>';
                         });
                     } else {
                         searchResultsDiv.innerHTML += '<p>No results found.</p>';
