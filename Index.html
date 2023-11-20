@@ -1,84 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>INET Browser</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Browser</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
         }
 
-        #searchBar {
-            width: 80%;
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #555;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav button {
+            margin: 0 5px;
+            padding: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #addressBar {
+            width: 70%;
             padding: 10px;
             font-size: 16px;
+            border: none;
         }
 
-        #searchButton {
+        #goButton {
             padding: 10px;
             font-size: 16px;
         }
 
         #searchResults {
-            width: 80%;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-            padding: 10px;
+            width: 70%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchResults p {
+            margin: 10px 0;
         }
     </style>
 </head>
 
 <body>
-    <h1>INET Browser</h1>
+    <header>
+        <h1>Professional Browser</h1>
+    </header>
+
+    <nav>
+        <button onclick="goBack()">Back</button>
+        <button onclick="goForward()">Forward</button>
+    </nav>
 
     <div>
-        <input type="text" id="searchBar" placeholder="Enter your search">
-        <button id="searchButton" onclick="search()">Search</button>
+        <input type="text" id="addressBar" placeholder="Enter URL or search term">
+        <button id="goButton" onclick="navigate()">Go/Search</button>
     </div>
 
     <div id="searchResults"></div>
 
     <script>
-        function search() {
-            var searchBar = document.getElementById('searchBar');
-            var query = searchBar.value.trim();
+        var historyStack = [];
+        var futureStack = [];
 
-            if (query === '') {
-                alert('Please enter a search query');
-                return;
+        function navigate() {
+            var addressBar = document.getElementById('addressBar');
+            var query = addressBar.value.trim();
+
+            if (isValidURL(query)) {
+                // Handle URL navigation
+                window.location.href = query;
+            } else {
+                // Handle search using DuckDuckGo Instant Answer API
+                search(query);
             }
+        }
 
+        function search(query) {
             var searchResultsDiv = document.getElementById('searchResults');
             searchResultsDiv.innerHTML = '<p>Searching...</p>';
 
-            // Replace 'YOUR_BING_API_KEY' with your actual Bing Search API key
-            var apiKey = 'YOUR_BING_API_KEY';
-
-            // Use Bing Search API to perform the search
-            fetch(`https://api.cognitive.microsoft.com/bing/v7.0/search?q=${encodeURIComponent(query)}`, {
-                    headers: {
-                        'Ocp-Apim-Subscription-Key': apiKey
-                    }
-                })
+            // Use DuckDuckGo Instant Answer API to perform the search
+            fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&pretty=1`)
                 .then(response => response.json())
                 .then(data => {
-                    var results = data.webPages.value;
-                    searchResultsDiv.innerHTML = '<h2>Search Results for "' + query + '"</h2>';
-                    if (results && results.length > 0) {
-                        results.forEach(result => {
-                            var title = result.name;
-                            var url = result.url;
-                            var snippet = result.snippet;
-                            searchResultsDiv.innerHTML += '<p><strong><a href="' + url + '" target="_blank">' + title + '</a></strong><br>' + snippet + '</p>';
-                        });
-                    } else {
-                        searchResultsDiv.innerHTML += '<p>No results found.</p>';
-                    }
+                    displaySearchResults(data, query);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                     searchResultsDiv.innerHTML = '<p>Error fetching search results. Please try again.</p>';
                 });
+        }
+
+        function displaySearchResults(data, query) {
+            var searchResultsDiv = document.getElementById('searchResults');
+            searchResultsDiv.innerHTML = '<h2>Search Results for "' + query + '"</h2>';
+
+            if (data.Results && data.Results.length > 0) {
+                data.Results.forEach(result => {
+                    searchResultsDiv.innerHTML += '<p><strong>' + result.FirstURL + '</strong><br>' + result.Text + '</p>';
+                });
+            } else {
+                searchResultsDiv.innerHTML += '<p>No results found.</p>';
+            }
+        }
+
+        function goBack() {
+            if (historyStack.length > 1) {
+                futureStack.push(historyStack.pop());
+                var previousPage = historyStack.pop();
+                window.location.href = previousPage;
+            }
+        }
+
+        function goForward() {
+            if (futureStack.length > 0) {
+                var nextPage = futureStack.pop();
+                window.location.href = nextPage;
+            }
+        }
+
+        function isValidURL(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (error) {
+                return false;
+            }
         }
     </script>
 </body>
