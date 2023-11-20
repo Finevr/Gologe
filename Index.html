@@ -1,61 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>IExplore</title>
+    <title>Gologe</title>
     <style>
         body {
             text-align: center;
         }
-        
+
         h1 {
             color: red;
         }
-        
-        #search-bar {
-            margin-top: 50px;
-        }
-        
-        #search-input {
+
+        input[type="text"] {
             width: 300px;
             height: 30px;
-            padding: 5px;
             font-size: 16px;
         }
-        
-        #search-button {
-            margin-top: 10px;
-            padding: 10px 20px;
+
+        input[type="submit"] {
+            height: 30px;
             font-size: 16px;
         }
-        
-        #search-results {
+
+        #searchResults {
             margin-top: 20px;
-            font-size: 14px;
         }
     </style>
 </head>
+
 <body>
-    <h1>IExplore</h1>
-    <div id="search-bar">
-        <input type="text" id="search-input" placeholder="Type your search query">
-        <button id="search-button">Search</button>
-    </div>
-    <div id="search-results"></div>
-    
+    <h1>GOLOGE</h1>
+    <form id="searchForm">
+        <input type="text" name="search" id="searchInput" placeholder="Search Wikipedia">
+        <input type="submit" value="Search">
+    </form>
+    <div id="searchResults"></div>
+
     <script>
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const searchResults = document.getElementById('search-results');
-        
-        searchButton.addEventListener('click', function() {
-            const query = searchInput.value;
-            const searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(query);
-            
-            searchResults.innerHTML = '';
-            searchResults.innerHTML = '<p>Searching for: ' + query + '</p>';
-            
-            window.open(searchUrl, '_blank');
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var searchInput = document.getElementById('searchInput');
+            var searchValue = searchInput.value.trim();
+            var searchResultsDiv = document.getElementById('searchResults');
+
+            if (searchValue.endsWith('.com')) {
+                searchResultsDiv.innerHTML = '<p>Searching on Google...</p>';
+                // You can customize the Google search URL and handle the results here.
+                // For simplicity, let's just display a message.
+                searchResultsDiv.innerHTML += '<p>Google search results for ' + searchValue + ' will be displayed here.</p>';
+            } else {
+                searchResultsDiv.innerHTML = '<p>Searching on Wikipedia...</p>';
+                // Fetch data from Wikipedia API or any other source and display results.
+                // For simplicity, let's just display a message.
+                searchResultsDiv.innerHTML += '<p>Wikipedia search results for ' + searchValue + ' will be displayed here.</p>';
+            }
         });
     </script>
 </body>
+
 </html>
