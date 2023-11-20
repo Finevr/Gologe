@@ -48,7 +48,7 @@
             searchResultsDiv.innerHTML = '<p>Searching on Wikipedia...</p>';
 
             // Fetch data from Wikipedia API
-            fetch('https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&utf8=1&srsearch=' + searchValue)
+            fetch('https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&utf8=1&srsearch=' + encodeURIComponent(searchValue))
                 .then(response => response.json())
                 .then(data => {
                     var results = data.query.search;
